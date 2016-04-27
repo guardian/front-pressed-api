@@ -1,0 +1,100 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Server-less API for front pressed time
+Parameters:
+    Stack:
+        Description: Stack name
+        Type: String
+        Default: cms-fronts
+    App:
+        Description: Application name
+        Type: String
+        Default: front-pressed-api
+    Stage:
+        Description: Stage name
+        Type: String
+        AllowedValues:
+            - PROD
+        Default: PROD
+    DeployBucket:
+        Description: Bucket where RiffRaff uploads artifacts on deploy
+        Type: String
+        Default: facia-dist
+    DynamoFrontPressedTableCODE:
+        Description: Table name containing front pressed data - CODE
+        Type: String
+    DynamoFrontPressedTablePROD:
+        Description: Table name containing front pressed data - PROD
+        Type: String
+Resources:
+    ExecutionRole:
+        Type: AWS::IAM::Role
+        Properties:
+            AssumeRolePolicyDocument:
+                Statement:
+                    - Effect: Allow
+                      Principal:
+                        Service:
+                            - lambda.amazonaws.com
+                      Action: "sts:AssumeRole"
+            Path: /
+            Policies:
+                - PolicyName: logs
+                  PolicyDocument:
+                    Statement:
+                        Effect: Allow
+                        Action:
+                            - "logs:CreateLogGroup"
+                            - "logs:CreateLogStream"
+                            - "logs:PutLogEvents"
+                        Resource: "arn:aws:logs:*:*:*"
+                - PolicyName: lambda
+                  PolicyDocument:
+                    Statement:
+                        Effect: Allow
+                        Action:
+                            - "lambda:InvokeFunction"
+                        Resource: "*"
+    Lambda:
+        Type: AWS::Lambda::Function
+        Properties:
+            Code:
+                S3Bucket:
+                    Ref: DeployBucket
+                S3Key: pressedApi/artifact.zip
+            Description: Boilerplate
+            Handler: index.handler
+            MemorySize: 128
+            Role:
+                "Fn::GetAtt": ["ExecutionRole", "Arn"]
+            Runtime: nodejs4.3
+            Timeout: 60
+    DynamoDBPolicy:
+        Type: AWS::IAM::Policy
+        Properties:
+            PolicyName: DynamoDBPolicy
+            PolicyDocument:
+                Statement:
+                    - Effect: Allow
+                      Action:
+                        - dynamodb:Query
+                      Resource:
+                        - "Fn::Join":
+                            - ""
+                            -
+                                - "arn:aws:dynamodb:"
+                                - Ref: "AWS::Region"
+                                - ":"
+                                - Ref: "AWS::AccountId"
+                                - ":table/"
+                                - Ref: DynamoFrontPressedTableCODE
+                        - "Fn::Join":
+                            - ""
+                            -
+                                - "arn:aws:dynamodb:"
+                                - Ref: "AWS::Region"
+                                - ":"
+                                - Ref: "AWS::AccountId"
+                                - ":table/"
+                                - Ref: DynamoFrontPressedTablePROD
+            Roles:
+                - Ref: ExecutionRole

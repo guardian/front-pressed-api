@@ -1,0 +1,30 @@
+defaultStacks:
+    - cms-fronts
+packages:
+    pressedApi:
+        type: aws-s3
+        data:
+            bucket: facia-dist
+            cacheControl: "public, max-age=315360000"
+            prefixPackage: true
+            prefixStack: false
+            prefixStage: false
+            publicReadAcl: false
+    lambda:
+        type: aws-lambda
+        data:
+            functions:
+                PROD:
+                    name: front-pressed-api-Lambda-1BG6EYV2WANDA
+                    filename: artifact.zip
+recipes:
+    upload:
+        actionsBeforeApp:
+            - pressedApi.uploadStaticFiles
+    lambda:
+        actionsBeforeApp:
+            - lambda.updateLambda
+    default:
+        depends:
+            - upload
+            - lambda
