@@ -60,7 +60,7 @@ Resources:
             Code:
                 S3Bucket:
                     Ref: DeployBucket
-                S3Key: pressedApi/artifact.zip
+                S3Key: pressedApiLambda/artifact.zip
             Description: Boilerplate
             Handler: index.handler
             MemorySize: 128
@@ -98,3 +98,12 @@ Resources:
                                 - Ref: DynamoFrontPressedTablePROD
             Roles:
                 - Ref: ExecutionRole
+    ApiGateway:
+        Type: AWS::ApiGateway::RestApi
+        Properties:
+            BodyS3Location:
+                Bucket:
+                    Ref: DeployBucket
+                Key: pressedApiGateway/swagger.yml
+            Description: Front ISO 8601 last pressed date
+            FailOnWarnings: true

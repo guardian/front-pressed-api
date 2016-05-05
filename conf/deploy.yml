@@ -1,7 +1,16 @@
 defaultStacks:
     - cms-fronts
 packages:
-    pressedApi:
+    pressedApiLambda:
+        type: aws-s3
+        data:
+            bucket: facia-dist
+            cacheControl: "public, max-age=315360000"
+            prefixPackage: true
+            prefixStack: false
+            prefixStage: false
+            publicReadAcl: false
+    pressedApiGateway:
         type: aws-s3
         data:
             bucket: facia-dist
@@ -20,7 +29,8 @@ packages:
 recipes:
     upload:
         actionsBeforeApp:
-            - pressedApi.uploadStaticFiles
+            - pressedApiLambda.uploadStaticFiles
+            - pressedApiGateway.uploadStaticFiles
     lambda:
         actionsBeforeApp:
             - lambda.updateLambda

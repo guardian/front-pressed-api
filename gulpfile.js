@@ -19,10 +19,15 @@ gulp.task('compile-dev', ['compile'], function () {
 	gulp.watch(LAMBDA_SOURCE, ['compile']);
 });
 
+gulp.task('swagger', function () {
+	return gulp.src('conf/swagger.yml')
+		.pipe(gulp.dest('tmp/riffraff/packages/pressedApiGateway'));
+});
+
 gulp.task('cloudformation', function () {
 	return gulp.src(CLOUDFORMATION_SOURCE)
 		.pipe(yaml({ space: 4 }))
-		.pipe(gulp.dest('./tmp/riffraff/packages/cloudformation'));
+		.pipe(gulp.dest('tmp/riffraff/packages/cloudformation'));
 });
 gulp.task('cfn', ['cloudformation']);
 
@@ -57,11 +62,11 @@ gulp.task('riffraff-deploy-dev', ['riffraff-deploy'], function () {
 
 gulp.task('dev', ['lint-dev', 'cloudformation-dev', 'compile-dev', 'riffraff-deploy-dev']);
 
-gulp.task('archive', ['compile', 'riffraff-deploy'], function () {
+gulp.task('archive', ['compile', 'swagger', 'riffraff-deploy'], function () {
 	return gulp.src('tmp/lambda/**/*')
 		.pipe(zip('artifact.zip'))
 		.pipe(gulp.dest('tmp/riffraff/packages/lambda'))
-		.pipe(gulp.dest('tmp/riffraff/packages/pressedApi'));
+		.pipe(gulp.dest('tmp/riffraff/packages/pressedApiLambda'));
 });
 
 gulp.task('package', ['archive'], function () {
