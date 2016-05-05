@@ -1,6 +1,11 @@
 defaultStacks:
     - cms-fronts
 packages:
+    cloudformation:
+        appendStageToCloudFormationStackName: false
+        cloudFormationStackName: front-pressed-api
+        createStackIfAbsent: false
+        templatePath: cloudformation/cloudformation.json
     pressedApiLambda:
         type: aws-s3
         data:
