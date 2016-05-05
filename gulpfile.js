@@ -62,7 +62,7 @@ gulp.task('riffraff-deploy-dev', ['riffraff-deploy'], function () {
 
 gulp.task('dev', ['lint-dev', 'cloudformation-dev', 'compile-dev', 'riffraff-deploy-dev']);
 
-gulp.task('archive', ['compile', 'swagger', 'riffraff-deploy'], function () {
+gulp.task('archive', ['compile', 'swagger', 'cloudformation', 'riffraff-deploy'], function () {
 	return gulp.src('tmp/lambda/**/*')
 		.pipe(zip('artifact.zip'))
 		.pipe(gulp.dest('tmp/riffraff/packages/lambda'))

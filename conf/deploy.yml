@@ -2,10 +2,13 @@ defaultStacks:
     - cms-fronts
 packages:
     cloudformation:
-        appendStageToCloudFormationStackName: false
-        cloudFormationStackName: front-pressed-api
-        createStackIfAbsent: false
-        templatePath: cloudformation/cloudformation.json
+        type: cloud-formation
+        data:
+            appendStageToCloudFormationStackName: false
+            cloudFormationStackName: front-pressed-api
+            createStackIfAbsent: false
+            prependStackToCloudFormationStackName: false
+            templatePath: cloudformation.json
     pressedApiLambda:
         type: aws-s3
         data:
@@ -32,6 +35,9 @@ packages:
                     name: front-pressed-api-Lambda-1BG6EYV2WANDA
                     filename: artifact.zip
 recipes:
+    cloudformation:
+        actionsBeforeApp:
+            - cloudformation.updateStack
     upload:
         actionsBeforeApp:
             - pressedApiLambda.uploadStaticFiles
@@ -42,4 +48,5 @@ recipes:
     default:
         depends:
             - upload
+            - cloudformation
             - lambda
