@@ -1,38 +1,38 @@
-swagger: '2.0'
+---
+swagger: "2.0"
 info:
-    title: Front pressed
-    description: Server-less API for front pressed time
-    version: '1.0.0'
+  version: "2016-05-06T10:09:48Z"
+  title: Front pressed
+  description: Server-less API for front pressed time
 schemes:
-    - https
-produces:
-    - application/json
+- "https"
 paths:
-    /{environment}:
-        get:
-            summary: Pressed time of live fronts
-            responses:
-                200:
-                    description: Pressed date in ISO 8601
-                    schema:
-                        type: object
-                        properties:
-                            date:
-                                type: string
-                                format: date-time
-                            status:
-                                type: string
-        parameters:
-            - name: environment
-              in: path
-              description: Live or draft environment
-              required: true
-              type: string
-              enum:
-                  - live
-                  - draft
-            - name: path
-              in: query
-              description: Front path
-              required: true
-              type: string
+  /{environment}:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "path"
+        in: "query"
+        required: true
+        type: "string"
+      - name: "environment"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        uri: "not sure"
+        type: "aws"
+definitions:
+  Empty:
+    type: "object"

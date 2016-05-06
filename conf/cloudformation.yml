@@ -98,12 +98,3 @@ Resources:
                                 - Ref: DynamoFrontPressedTablePROD
             Roles:
                 - Ref: ExecutionRole
-    ApiGateway:
-        Type: AWS::ApiGateway::RestApi
-        Properties:
-            BodyS3Location:
-                Bucket:
-                    Ref: DeployBucket
-                Key: pressedApiGateway/swagger.yml
-            Description: Front ISO 8601 last pressed date
-            FailOnWarnings: true
